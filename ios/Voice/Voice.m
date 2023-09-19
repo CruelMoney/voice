@@ -350,6 +350,7 @@
 
                        // No result.
                        if (result == nil) {
+                         [self sendResult:@{@"code": @"recognition_fail", @"message": @"No result returned"} :nil :nil :nil];
                          [self sendEventWithName:@"onSpeechEnd" body:nil];
                          [self teardown];
                          return;
@@ -368,10 +369,20 @@
 
                        if (isFinal || self.recognitionTask.isCancelled ||
                            self.recognitionTask.isFinishing) {
+                            // set message based on reason for stopping
+                          NSString *message = @"No speech detected";
+                          if (self.recognitionTask.isCancelled) {
+                              message = @"Recognition was cancelled";
+                          } else if (self.recognitionTask.isFinishing) {
+                              message = @"Recognition is finishing";
+                          }
+
+                          [self sendResult:@{@"code": @"recognition_fail", @"message": message} :nil :nil :nil];
+
                          [self sendEventWithName:@"onSpeechEnd" body:nil];
-                         if (!self.continuous) {
-                           [self teardown];
-                         }
+                        //  if (!self.continuous) {
+                        //    [self teardown];
+                        //  }
                          return;
                        }
                      }];
