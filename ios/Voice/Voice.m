@@ -302,6 +302,12 @@
   // recording is finished
   self.recognitionRequest.shouldReportPartialResults = YES;
 
+  // add punctuation
+  self.recognitionRequest.addsPunctuation = YES;
+
+  // task hint
+  self.recognitionRequest.taskHint = SFSpeechRecognitionTaskHintDictation;
+
   if (self.recognitionRequest == nil) {
     [self sendResult:@{@"code" : @"recognition_init"}:nil:nil:nil];
     [self teardown];
